@@ -1,0 +1,53 @@
+import face_recognition
+import cv2
+import numpy as np
+import os
+from datetime import datetime
+import csv
+
+video_cap = cv2.VideoCapture(0)
+
+modi_img = face_recognition.load_image_file("D:/hari11/modi.jpeg")
+modi_encoding = face_recognition.face_encoding(modi_img)
+
+elon_img = face_recognition.load_image_file("D:/hari11/elon.jpeg")
+elon_encoding = face_recognition.face_encoding(elon_img)
+
+known_faces_encoding = [
+    modi_encoding,
+    elon_encoding
+]
+
+known_faces_names = [
+    "modi",
+    "elon"
+]
+
+students = known_faces_names.copy()
+
+face_locations = []
+face_encoding = []
+face_names = []
+
+now = datetime.now()
+current_date = now.strftime("%Y-%m-%d")
+
+f = open(current_date+'.csv','w+ ',newline = '')
+inwriter = csv.writer(f)
+
+while True:
+    _,frame = video_cap.read()
+    smaller_frame = cv2.resize(frame,(0,0), fx = 0.25, fy =0.25)
+    rgb_small_frame = smaller_frame[:,:,::-1]
+    if s:
+        face_locations = face_recognition.face_locations(rgb_small_frame)
+        face_encodings = face_recognition.face_encoding(rgb_small_frame,face_locations)
+        face_names = []
+        for face_encoding in face_encodings:
+            matched = face_recognition.compare_faces(known_faces_encoding,face_encoding)
+            name=""
+            face_distance = face_recognition.face_distance(known_faces_encoding,face_encoding)
+            best_match_index = np.argmin(face_distance)
+            if matched[best_match_index]:
+                name = known_faces_names[best_match_index]
+                
